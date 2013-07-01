@@ -9,10 +9,11 @@ $fn = shift;
 if($mode eq "smudge") {
     $log = `git log --pretty=format:"%ai|%H|%aN" -1 -- $fn`;
     ($modtime, $hash, $author, @rest) = split /\|/, $log;
+    $basefn = `basename $fn`;
 
     while($line = <STDIN>) {
 	$line =~ s|\$Date\$|\$Date: $modtime\$|;
-	$line =~ s|\$Id\$|\$Id: $fn $hash $author $modtime\$|;
+	$line =~ s|\$Id\$|\$Id: $basefn $hash $author $modtime\$|;
 	print $line;
     }
 } else {
