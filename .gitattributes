@@ -1,0 +1,8 @@
+README	filter=keywords
+COPYING	filter=keywords
+*.txt	filter=keywords
+*.c	filter=keywords
+*.h	filter=keywords
+*.pde	filter=keywords
+*.ino	filter=keywords
+

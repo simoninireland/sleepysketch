@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+
+# Replicate CVS- and SVN-like keyword substitution under git
+# $Id$
+
+$mode = shift;
+$fn = shift;
+
+if($mode eq "smudge") {
+    $log = `git log --pretty=format:"%ai|%H|%aN" -1 -- $fn`;
+    ($modtime, $hash, $author, @rest) = split /\|/, $log;
+
+    while($line = <STDIN>) {
+	$line =~ s|\$Date\$|\$Date: $modtime\$|;
+	$line =~ s|\$Id\$|\$Id: $fn $hash $author $modtime\$|;
+	print $line;
+    }
+} else {
+    while($line = <STDIN>) {
+	$line =~ s/\$([A-Za-z]+):[^\$]+\$/\$$1\$/g;
+	print $line;
+    }
+}    
