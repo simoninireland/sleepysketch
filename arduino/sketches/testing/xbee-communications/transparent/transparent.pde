@@ -18,26 +18,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-/**
-  The pin driving the LED.
-  */
 #define LED 13
 
 
-/**
-  Set up the device.
-  */
 void setup() {
   pinMode(LED, OUTPUT);
   Serial.begin(9600);
 }
 
 
-/**
-  Main program loop.
-  Send a tick to the serial port, counting down in time just to make
-  things a bit more interesting.
-  */
 void loop() {
   for(int i = 5; i > 0; i--) {
     digitalWrite(LED, HIGH);
