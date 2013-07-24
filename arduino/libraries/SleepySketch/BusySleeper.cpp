@@ -18,20 +18,23 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-#include "LightSleeper.h"
+#include <Arduino.h>
+#include "BusySleeper.h"
 
 /**
-   A "light sleeper" that uses the Arduino's ordinary sleep() function
-   to go to sleep. This doesn't perform any power-saving or other
+   A "busy sleeper" that uses the Arduino's ordinary delay() function
+   to go to sleep. delay() is simply a busy loop that locks-out anything
+   else running on the Arduino apart from interrupts.
+
+   This doesn't perform any power-saving or other
    tricks, and so should be regarded as the sleeper used for debugging.
 */
 
 
 /**
-   Create a new light sleeper.
+   Create a new busy sleeper.
 */
-LightSleeper::LightSleeper() {
-}
+BusySleeper::BusySleeper() { /* nothing */ }
 
 
 /**
@@ -39,10 +42,11 @@ LightSleeper::LightSleeper() {
 
    The Arduino is slept without power-saving.
 
-   \param millis the ampunt of time to sleep for
-   \return 0
+   \param millis the amount of time to sleep for
+   \return the same value, as we assume we slept correctly
 */
-long LightSleeper::sleepFor( long millis ) {
-  sleep(millis);
+long BusySleeper::sleepFor( long millis ) {
+  delay(millis);
+  return millis;
 }
 

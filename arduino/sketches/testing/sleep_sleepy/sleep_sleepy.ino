@@ -18,16 +18,38 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-#ifndef SLEEPER_H
-#define SLEEPER_H
+/**
+  Test the sleeping capabilities of SleepySketch. 
+*/
 
-class Sleeper {
- protected:
-  Sleeper();
+#include <SleepySketch.h>
+#include <BusySleeper.h>
+#include <Actor.h>
 
- public:
-  virtual long sleepFor( long millis ) = 0;
+class PingActor : public Actor {
+  protected:
+    void behaviour();
+    
+  public:
+    PingActor();
 };
 
-#endif
+PingActor::PingActor() { }
+
+void PingActor::behaviour() {
+  Serial.println("Ping!");
+}
+
+void setup() {
+  Serial.begin(9600);
+  Sleepy.begin(new BusySleeper());
+  Serial.println("Begin");
+  Sleepy.scheduleEvery(new PingActor(), Sleepy.expandTime(5));
+  Sleepy.scheduleEvery(new PingActor(), Sleepy.expandTime(10));
+  Serial.println("Pause");
+}
+
+void loop() {
+  Sleepy.loop();
+}
 

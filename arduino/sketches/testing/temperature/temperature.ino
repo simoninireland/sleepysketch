@@ -45,7 +45,7 @@ void setup(void) {
 void loop(void) {
   sensors.requestTemperatures();
   for(int i = 0; i < 3; i++) {
-    float c - sensors.getTempCByIndex(i);
+    float c = sensors.getTempCByIndex(i);
     Serial.print("Sensor ");   Serial.print(i);   Serial.print(" = ");
     Serial.print(c);   Serial.println("C");
   }

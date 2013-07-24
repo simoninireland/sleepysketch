@@ -31,17 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 
 #define LED 13
 
-volatile int f_wdt = 1;
-
 ISR( WDT_vect ) {
-  if(f_wdt == 0)
-  {
-    f_wdt=1;
-  }
-  else
-  {
-    Serial.println("WDT Overrun!!!");
-  }
 }
  
 void blink( int times, int on ) {
@@ -57,6 +47,12 @@ void blink( int times, int on ) {
 void sleep(void) {
   /* select the sleep mode */  
   set_sleep_mode(SLEEP_MODE_PWR_SAVE);  
+ 
+  // set up the watchdog timer
+  MCUSR &= ~(1 << WDRF);
+  WDTCSR |= (1 << WDCE) | (1 << WDE);
+  WDTCSR = (1 << WDP0) | (1 << WDP3); /* 8s */
+  WDTCSR |= _BV(WDIE);
   sleep_enable();  
  
   /* enter the sleep mode */
@@ -74,17 +70,13 @@ void sleep(void) {
 void setup() {
   Serial.begin(9600);
   pinMode(LED, OUTPUT);
-
-  // set up the watchdog timer
-  MCUSR &= ~(1 << WDRF);
-  WDTCSR |= (1 << WDCE) | (1 << WDE);
-  WDTCSR ~= (1 << WDP0) | (1 << WDP3); /* 8s */
-  WDTCSR |= _BV(WDIE);
 }
 
 void loop() {
    blink(1,100);
+   Serial.print("Going in: ");   Serial.println(millis());
    sleep();
+   Serial.print("Coming out: ");   Serial.println(millis());
    blink(5, 200);
    delay(5000);
  }

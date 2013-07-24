@@ -18,16 +18,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-#ifndef LIGHTSLEEPER_H
-#define LIGHTSLEEPER_H
+#ifndef BUSYSLEEPER_H
+#define BUSYSLEEPER_H
 
 #include "Sleeper.h"
 
-class LightSleeper : Sleeper {
+class BusySleeper : public Sleeper {
  public: 
-  LightSleeper();
+  BusySleeper();
 
-  long delayFor( long millis );
+  long sleepFor( long millis );
 };
 
 #endif

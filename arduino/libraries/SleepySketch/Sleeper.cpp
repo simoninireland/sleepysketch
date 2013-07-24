@@ -18,23 +18,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-#ifndef HEAVYSLEEPER_H
-#define HEAVYSLEEPER_H
+/**
+   \class Sleeper
+   \brief Abstract class of sleepers.
+   A sleeper keeps the system asleep for a given number of milliseconds,
+   and us used by the skeepy sketch to put the system into a power-down
+   mode. Sub-classes adopt different strategies for sleeping, from
+   "busy" sleeping (a tight loop) to "deep" sleeping (power-down using
+   a low-power mode).
+*/
 
 #include "Sleeper.h"
 
-class HeavySleeper : public Sleeper {
- protected:
-  void sleep();
-  void wdtSleep( int i );
-  long wdtSleepFor( long millis );
-  long timerSleepFor( long millis );
 
- public:
-  HeavySleeper();
+/**
+   Create a new sleeper.
+*/
+Sleeper::Sleeper() { /* nothing */ }
 
-  long sleepFor( long millis );
-};
 
-#endif
-
+/** \fn long Sleeper::sleepFor( long millis )
+    Sleep for a given period.
+    The sleeper uses whatever mechanism the sub-class deploys
+    to sleep for the given period. The method may return a different
+    number of milliseconds actually slept for (or an estimate), to
+    allow for corrections.
+    \param millis the number of milliseconds to sleep for
+    \return the number of milliseconds actually slept for
+*/

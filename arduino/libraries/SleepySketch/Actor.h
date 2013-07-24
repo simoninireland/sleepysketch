@@ -18,47 +18,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-/*
-  Actor abstract class.
-  An actor is a wrapper around some time-limited behaviour that can
-  be scheduled via an ActorQueue.
-*/
-
 #ifndef ACTOR_H
 #define ACTOR_H
 
-/**
-   Actor abstract class.
-*/
 class Actor {
  protected:
-  /**
-     Create a new actor.
-  */
   Actor();
 
-  /**
-     Pre-behaviour action.
-     Executed before the behaviour() code. The default does nothing.
-  */
   virtual void pre();
-
-  /**
-     Post-behaviour action.
-     Executed after the behaviour() code. The default does nothing.
-  */
   virtual void post();
-
-  /**
-     The behaviour the actor should execute.
-     This needs to be overridden by all sub-classes.
-  */
   virtual void behaviour() = 0;
 
  public:
-  /**
-     Execute the actor's behaviour.
-  */
   void execute();
 };
 

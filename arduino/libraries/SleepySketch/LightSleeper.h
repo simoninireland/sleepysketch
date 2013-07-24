@@ -27,7 +27,7 @@ class LightSleeper : Sleeper {
  public: 
   LightSleeper();
 
-  long delayFor( long millis );
+  long sleepFor( long millis );
 };
 
 #endif

@@ -21,9 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 #include "LightSleeper.h"
 
 /**
-   A "light sleeper" that uses the Arduino's ordinary sleep() function
-   to go to sleep. This doesn't perform any power-saving or other
-   tricks, and so should be regarded as the sleeper used for debugging.
+   A "light sleeper" that uses Timer1 to remain in a relatively
+   awake state.
 */
 
 
@@ -37,12 +36,12 @@ LightSleeper::LightSleeper() {
 /**
    Sleep for the given period.
 
-   The Arduino is slept without power-saving.
+   TBD
 
    \param millis the ampunt of time to sleep for
-   \return 0
+   \return number of milliseconds remaining to sleep
 */
 long LightSleeper::sleepFor( long millis ) {
-  sleep(millis);
+
 }
 

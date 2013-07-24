@@ -18,42 +18,22 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-/*
-  Actor abstract class.
-  An actor is a wrapper around some time-limited behaviour that can
-  be scheduled via an ActorQueue.
-*/
+#ifndef REPEATINGACTOR_H
+#define REPEATINGACTOR_H
 
-#define "Actor.h"
+#include "Actor.h"
 
+class RepeatingActor : public Actor {
+ protected:
+  Actor *underlying;
+  long period;
 
-/**
-   Create a new actor.
-*/ 
-Actor::Actor() { ; }
+  void pre();
+  void behaviour();
 
+ public:
+  RepeatingActor( Actor *a, long millis );
+};
 
-/**
-   Empty function for pre-behaviour code.
-*/
-void Actor::pre() { /* nothing */ }
-
-
-/**
-   Empty function for post-behaviour code.
-*/
-void Actor::post() { /* nothing */ }
-
-/**
-   Execute the actor's behaviour.
-   This runs the pre-behaviour code, then the behaviour
-   itself, and then the post-behaviour code.
-*/
-void Actor::execute() {
-  pre();
-  behaviour();
-  post();
-}
-
-
+#endif
 

@@ -21,9 +21,57 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 #ifndef SLEEPYSKETCH_H
 #define SLEEPYSKETCH_H
 
+#define SLEEPYSKETCH_VERSION "0.1"
+
+#include "Actor.h"
 #include "Sleeper.h"
-#include "LightSleeper.h"
-#include "HeavySleeper.h"
+
+#ifndef MAX_ACTORS
+/**
+   The maximum number of scheduleable actors. Defaults to 10.
+   Re-define this macro before importing the header file if
+   you'd like a larger or smaller value.
+
+   Each schedulable actor takes up 8 bytes of RAM (1 long
+   and two pointers).
+*/
+#define MAX_ACTORS 10
+#endif
+
+#include "Actor.h"
+#include "Sleeper.h"
+
+typedef struct _ActorSchedule {
+  Actor *actor;
+  long scheduledTime;
+  struct _ActorSchedule *next;
+} ActorSchedule;
+
+class SleepySketch {
+ protected:
+  int maxActors;
+  long tickTime;
+  Sleeper *sleeper;
+  ActorSchedule *queue, *freeQueue;
+
+  ActorSchedule *freeSchedule();
+  ActorSchedule *nextSchedule();
+  void refreeSchedule( ActorSchedule *s );
+
+ public:
+  SleepySketch();
+
+  void begin( Sleeper *s, int m = MAX_ACTORS );
+  void loop();
+
+  long now();
+  long expandTime( int second, int minute = 0, int hour = 0, int day = 0 );
+
+  void scheduleIn( Actor *a, long millis );
+  void scheduleEvery( Actor *a, long millis );
+};
+
+extern SleepySketch Sleepy;
 
 #endif
 
