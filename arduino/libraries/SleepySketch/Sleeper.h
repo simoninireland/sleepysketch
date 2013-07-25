@@ -27,6 +27,7 @@ class Sleeper {
 
  public:
   virtual long sleepFor( long millis ) = 0;
+  virtual long now() = 0;
 };
 
 #endif

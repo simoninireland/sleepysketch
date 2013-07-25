@@ -26,6 +26,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 #include <BusySleeper.h>
 #include <Actor.h>
 
+#define LED 13
+ 
+void blink( int times, int on ) {
+  for(int i = 0; i < times; i++) {
+    digitalWrite(LED, HIGH);
+    delay(on);
+    digitalWrite(LED, LOW);
+    delay(100);
+  }
+}
+
 class PingActor : public Actor {
   protected:
     void behaviour();
@@ -38,15 +49,21 @@ PingActor::PingActor() { }
 
 void PingActor::behaviour() {
   Serial.println("Ping!");
+  blink(5,100);
 }
 
 void setup() {
+  delay(500);
   Serial.begin(9600);
+  pinMode(LED, OUTPUT);
   Sleepy.begin(new BusySleeper());
+
+  delay(500);
   Serial.println("Begin");
   Sleepy.scheduleEvery(new PingActor(), Sleepy.expandTime(5));
   Sleepy.scheduleEvery(new PingActor(), Sleepy.expandTime(10));
   Serial.println("Pause");
+  delay(500);
 }
 
 void loop() {

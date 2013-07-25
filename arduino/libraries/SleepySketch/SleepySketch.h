@@ -50,7 +50,6 @@ typedef struct _ActorSchedule {
 class SleepySketch {
  protected:
   int maxActors;
-  long tickTime;
   Sleeper *sleeper;
   ActorSchedule *queue, *freeQueue;
 

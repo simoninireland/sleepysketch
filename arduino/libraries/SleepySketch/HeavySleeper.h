@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 
 class HeavySleeper : public Sleeper {
  protected:
+  long wakeUpOffset;
+
   void sleep();
   void wdtSleep( int i );
   long wdtSleepFor( long millis );
@@ -34,6 +36,7 @@ class HeavySleeper : public Sleeper {
   HeavySleeper();
 
   long sleepFor( long millis );
+  long now();
 };
 
 #endif

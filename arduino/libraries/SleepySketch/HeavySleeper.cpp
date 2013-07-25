@@ -38,10 +38,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
 
+/*
+   Dummy watchdog timer interrupt vector, needed to prevent
+   a system reset but not otherwise used
+*/ 
+ISR( WDT_vect ) {
+  /* dummy */
+}
+
+
 /**
    Create a new heavy sleeper,
 */
-HeavySleeper::HeavySleeper() { /* nothing */ }
+HeavySleeper::HeavySleeper() {
+  wakeUpOffset = 0L;
+}
 
 
 /**
@@ -68,13 +79,21 @@ void HeavySleeper::sleep() {
    \param i encoded millisecond delay
 */
 void HeavySleeper::wdtSleep( int i ) {
-  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-  WDTCSR |= (1 << WDCE) | (1 << WDE);
-  WDTCSR = (( (i & 1)       << WDP0) |  // write in encoded prescaler selection
-	    (((i & 2) >> 1) << WDP1) |
-	    (((i & 4) >> 2) << WDP2) |
-	    (((i & 8) >> 3) << WDP3));
-  WDTCSR |= (1 << WDIE);
+  // compute bitmask for sleep period
+  int mask = 0;
+  if(i & 1) mask |= 1 << WDP0;
+  if(i & 2) mask |= 1 << WDP1;
+  if(i & 4) mask |= 1 << WDP2;
+  if(i & 8) mask |= 1 << WDP3;
+    
+  // set up watchdog timer
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);   // very low-power sleep
+  MCUSR &= ~(1 << WDRF);                 // clear reset flag
+  WDTCSR |= (1 << WDCE) | (1 << WDE);    // allow updates
+  WDTCSR = mask;                         // update delay time
+  WDTCSR |= (1 << WDIE);                 // enable interrupts (to prevent reset)
+
+  // go to sleep
   sleep();
 }
 
@@ -103,19 +122,18 @@ long HeavySleeper::timerSleepFor( long millis ) {
 */
 long HeavySleeper::wdtSleepFor( long millis ) {
   int i = 9;                  // largest delay available
-  long thresh = 2048 << 9;    // ...which corresponds to this many milliseconds
-  long ms = millis << 7;      // ms = millis * 128;
+  long thresh = 2048 << 2;    // ...which corresponds to this many milliseconds
+  long ms = millis;
   
   while(i > 0) {
-      while(ms > thresh) {
-	Serial.print("Sleep for ");   Serial.println(i);
-	wdtSleep(i);
-	ms -= thresh;
-      }
-      i--;   thresh = thresh >> 1;
+    while(ms > thresh) {
+      wdtSleep(i);
+      ms -= thresh;
     }
+    i--;   thresh = thresh >> 1;
+  }
     
-    return (ms >> 7);   // return ms / 128
+  return (millis - ms);
 }
 
 
@@ -131,10 +149,21 @@ long HeavySleeper::wdtSleepFor( long millis ) {
    \return an estimate of how many milliseconds we slept for
 */
 long HeavySleeper::sleepFor( long millis ) {
-  delay(millis);    return millis;
-  //long wdt = wdtSleepFor(millis);
-  //long remaining = millis - wdt;
-  //long timer = timerSleepFor(remaining);
+  long wdt = wdtSleepFor(millis);
+  long remaining = millis - wdt;
+  long timer = timerSleepFor(remaining);
 
-  //return wdt + timer;
+  wakeUpOffset += wdt + timer;
+  return wdt + timer;
+}
+
+
+/**
+   Return the sleeper's estimate of the current time.
+   We use the estimate of the time we've stayed asleep to
+   update a local estimator.
+   \return the number of milliseconds we've been awake
+*/
+long HeavySleeper::now() {
+  return wakeUpOffset + millis();
 }

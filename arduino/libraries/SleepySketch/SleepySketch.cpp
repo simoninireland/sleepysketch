@@ -103,14 +103,13 @@ void SleepySketch::begin( Sleeper *s, int m ) {
   queue = NULL;
   freeQueue = new ActorSchedule[maxActors];  // all slots initially free
   for(int i = 0; i < maxActors; i++) {
-    ActorSchedule sched = freeQueue[i];
+    ActorSchedule *sched = &freeQueue[i];
 
     // link each schedule entry to the next, with all
     // being marked as un-used
-    sched.actor = NULL;
-    sched.next = ((i == maxActors - 1) ? NULL : &freeQueue[i + 1]);
+    sched->actor = NULL;
+    sched->next = ((i == maxActors - 1) ? NULL : &freeQueue[i + 1]);
   }
-  //Serial.println("SleepySKetch initialised");
 }
 
 
@@ -118,21 +117,23 @@ void SleepySketch::begin( Sleeper *s, int m ) {
    Schedule an actor.
    The actor is added to the scheduling queue along with its scheduled
    execution time.
-   \oaram a the actor to be scheduled
+   \param a the actor to be scheduled
    \param millis the time at which to schedule the actor
 */
 void SleepySketch::scheduleIn( Actor *a, long millis ) {
   // set up the schedule for the actor
   ActorSchedule *sched = freeSchedule();
+  if(sched == NULL) {
+    Serial.println("No available schedule!");
+  }
   sched->actor = a;
-  sched->scheduledTime = now() + millis; // tick-time to awaken
+  sched->scheduledTime = now() + millis;
 
-  // ass new schedule to queue
+  // add new schedule to queue
   ActorSchedule *s = queue, *q = NULL;
   if(s == NULL) {
     // first schedule, add as new queue
     queue = sched;
-    return;
   } else {
     // track down the schedule queue looking for earlier
     // schedules, and add the current schedule
@@ -187,14 +188,13 @@ long SleepySketch::expandTime( int second, int minute, int hour, int day ) {
 
 
 /**
-   Return the current time, as understood by the actor queue.
-   The time is returned relative to some time base, typically system
-   start-up.
+   Return the current time in milliseconds.
+   This is an estimate of the number of milliseconds since the
+   system restarted.
    \return the time in milliseconds
 */
 long SleepySketch::now() {
-  // TBD
-  return millis();
+  return sleeper->now();
 }
 
 
@@ -205,9 +205,6 @@ long SleepySketch::now() {
    before running it.
 */
 void SleepySketch::loop() {
-  // grab the current time in milliseconds
-  tickTime = millis();
-
   while(1) {
     ActorSchedule *sched = nextSchedule();
 
@@ -217,8 +214,12 @@ void SleepySketch::loop() {
     } else {
       // sleep for the time remaining until scheduled time
       long rem = sched->scheduledTime - now();
-      tickTime += sleeper->sleepFor(rem);
-      
+      if(rem < 0) {
+	Serial.println("Running behind time...");
+      } else {
+	sleeper->sleepFor(rem);
+      }
+
       // execute the actor
       sched->actor->execute();
       

@@ -28,6 +28,7 @@ class BusySleeper : public Sleeper {
   BusySleeper();
 
   long sleepFor( long millis );
+  long now();
 };
 
 #endif

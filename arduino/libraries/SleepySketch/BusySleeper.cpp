@@ -50,3 +50,12 @@ long BusySleeper::sleepFor( long millis ) {
   return millis;
 }
 
+
+/**
+   Return the current time in milliseconds.
+   There is no need for any corrections.
+   \return the current time in milliseconds
+*/
+long BusySleeper::now() {
+  return millis();
+}
