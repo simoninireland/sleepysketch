@@ -23,6 +23,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 
 #include "Actor.h"
 
+/**
+   \brief An Actor combinator that repeatedly runs another actor's behaviour.
+
+   The behaviour of this actor is to run another actor and then
+   re-schedule itself. This decouples the behaviour of an actor
+   from its scheduling, while still allowing repeating behaviour.
+   (An alternative design is to have the underlying actor re-schedule
+   itself, thereby tying behaviour and scheduling together. This often
+   makes perfect sense for a programmer.)
+
+   The scheduling period runs from when the actor is first scheduled,
+   not from when its behaviour ends. This allows for more precise timing
+   periods, but means that if an actor takes longer to execute than
+   its scheduled period, it will start to lag.
+*/
 class RepeatingActor : public Actor {
  protected:
   Actor *underlying;
@@ -32,6 +47,12 @@ class RepeatingActor : public Actor {
   void behaviour();
 
  public:
+  /**
+     Create a new repeating actor that repeatedly schedules the underlying Actor.
+     The actor is initially un-scheduled.
+     \param a the underlying actor to schedule
+     \param millis the scheduling period in milliseconds
+  */
   RepeatingActor( Actor *a, long millis );
 };
 

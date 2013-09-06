@@ -25,20 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 #include <avr/wdt.h>
 
 /*
-  Sleeper that uses the Atmel ATmega's watchdog timer.
-  The watchdog timer provides the deepest-available sleep mode,
-  and therefore the highest potential power savings -- at a cost of
-  reducing activity to a minumum, and possibly disabling interrupts
-  that might be needed. If a system that is software-driven -- so the
-  activity of the microcontroller is completely determined by the
-  software it is running, not by peripherals -- this is a good trade-off.
-  However, it does mean that we have to be careful in keeping track
-  of the time, since the usual millis() function doesn't count across
-  sleep periods.
-*/
-
-
-/*
    Dummy watchdog timer interrupt vector, needed to prevent
    a system reset but not otherwise used
 */ 
@@ -47,9 +33,6 @@ ISR( WDT_vect ) {
 }
 
 
-/**
-   Create a new heavy sleeper,
-*/
 HeavySleeper::HeavySleeper() {
   wakeUpOffset = 0L;
 }
@@ -137,17 +120,6 @@ long HeavySleeper::wdtSleepFor( long millis ) {
 }
 
 
-/**
-   Delay the Arduino for a given number of milliseconds
-
-   The watchdog timer can put the system asleep for only fixed periods of time,
-   essentially powers-of-two from 16ms up to 8s. We use this for as long as possible,
-   and then transfer to use Timer1 which has more precise but delays but less
-   power-saving potential.
-
-   \param millis number of milliseconds to sleep for
-   \return an estimate of how many milliseconds we slept for
-*/
 long HeavySleeper::sleepFor( long millis ) {
   long wdt = wdtSleepFor(millis);
   long remaining = millis - wdt;
@@ -158,12 +130,6 @@ long HeavySleeper::sleepFor( long millis ) {
 }
 
 
-/**
-   Return the sleeper's estimate of the current time.
-   We use the estimate of the time we've stayed asleep to
-   update a local estimator.
-   \return the number of milliseconds we've been awake
-*/
 long HeavySleeper::now() {
   return wakeUpOffset + millis();
 }

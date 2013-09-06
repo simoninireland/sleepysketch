@@ -21,15 +21,47 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 #ifndef ACTOR_H
 #define ACTOR_H
 
+/**
+   \brief A routine intended to run for a bounded length of time, scheduled as part of a sleepy sketch.
+
+   Each actor sub-class defines a behaviour, and may optionally define
+   a pre- and post-behaviour action that can then be further inherited.
+   (These might be used to enable peripherals prior to an observation
+   and power them down afterwards, for example. The defaults do nothing.)
+
+   There is nothing that prevents an actor defining a non-terminating
+   behaviour, but to do so will screw up scheduling.
+*/
 class Actor {
  protected:
   Actor();
 
+  /**
+     The default pre-behaviour.
+     The default does nothing. Override this function to support
+     a family of actors with common initialisation.
+  */
   virtual void pre();
+
+  /**
+     The default post-behaviour.
+     The default does nothing. Override this function to support
+     a family of actors with common finalisation.
+  */
   virtual void post();
+
+  /**
+     The actor's behaviour.
+     This function must be overridden by all sub-classes, and
+     provides the "core" behaviour for the actor.
+  */
   virtual void behaviour() = 0;
 
  public:
+  /**
+     Execute the actor's overall behaviour.
+     This executes behavour(), bracketed by pre() and post().
+  */
   void execute();
 };
 

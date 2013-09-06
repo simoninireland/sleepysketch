@@ -18,31 +18,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-/**
-   \class Sleeper
-   \brief Abstract class of sleepers.
-   A sleeper keeps the system asleep for a given number of milliseconds,
-   and us used by the skeepy sketch to put the system into a power-down
-   mode. Sub-classes adopt different strategies for sleeping, from
-   "busy" sleeping (a tight loop) to "deep" sleeping (power-down using
-   a low-power mode).
-*/
-
 #include "Sleeper.h"
 
-
-/**
-   Create a new sleeper.
-*/
 Sleeper::Sleeper() { /* nothing */ }
-
-
-/** \fn long Sleeper::sleepFor( long millis )
-    Sleep for a given period.
-    The sleeper uses whatever mechanism the sub-class deploys
-    to sleep for the given period. The method may return a different
-    number of milliseconds actually slept for (or an estimate), to
-    allow for corrections.
-    \param millis the number of milliseconds to sleep for
-    \return the number of milliseconds actually slept for
-*/

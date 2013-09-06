@@ -18,17 +18,44 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 */
 
-#ifndef LIGHTSLEEPER_H
-#define LIGHTSLEEPER_H
+/**
+  The ever-fascinating blinking LED with lots of sleeping.
+  
+  The 
+*/
 
-#include "Sleeper.h"
+#include <SleepySketch.h>
+#include <HeavySleeper.h>
 
-class LightSleeper : Sleeper {
- public: 
-  LightSleeper();
+#define LED 13
 
-  long sleepFor( long millis );
+class BlinkyActor : public Actor {
+  private:
+    int number;
+  public:
+    BlinkyActor( int n );
+    void behaviour();
 };
 
-#endif
+BlinkyActor::BlinkyActor( int n ) { number = n; }
+
+void BlinkyActor::behaviour() {
+  for(int i = 0; i < number; i++) {
+    digitalWrite(LED, HIGH);
+    delay(300);
+    digitalWrite(LED, LOW);
+    delay(200);
+  }
+}
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  Sleepy.begin(new HeavySleeper());
+   
+  Sleepy.scheduleEvery(new BlinkyActor(10), 30 * 1000);
+}
+
+void loop() {
+  Sleepy.loop();
+}
 

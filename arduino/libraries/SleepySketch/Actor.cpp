@@ -21,55 +21,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
 #include <Arduino.h>
 #include "Actor.h"
 
-/**
-   \class Actor
-   \brief An actor is a routine intended to run for a bounded length of time,
-   scheduled as part of a sleepy sketch.
-
-   Each actor sub-class defines a behaviour, and may optionally define
-   a pre- and post-behaviour action that can then be further inherited.
-   (These might be used to enable peripherals prior to an observation
-   and power them down afterwards, for example. The defaults do nothing.)
-
-   There is nothing that prevents an actor defining a non-terminating
-   behaviour, but to do so will screw up scheduling.
-*/
 
 
-/**
-   Create a new actor instance.
-*/
 Actor::Actor() { }
 
 
-/**
-   The default pre-behaviour.
-   The default does nothing. Override this function to support
-   a family of actors with common initialisation.
-*/
 void Actor::pre() { /* nothing */ }
-
-
-/**
-   The default post-behaviour.
-   The default does nothing. Override this function to support
-   a family of actors with common finalisation.
-*/
 void Actor::post() { /* nothing */ }
 
 
-/**
-   \fn void Actor::behaviour()
-   \brief The actor's behaviour.
-   This function must be overridden by all sub-classes, and
-   provides the "core" behaviour for the actor.
-*/
-
-
-/**
-   Execute the actor's overall behaviour.
-   This executes behavour(), bracketed by pre() and post().
-*/
 void Actor::execute() {
   pre();
   behaviour();
